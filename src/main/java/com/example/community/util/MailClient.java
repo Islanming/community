@@ -11,6 +11,11 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+/**
+ * 邮件发送
+ * 类似邮件发送功能的客户端
+ * @author Lenovo
+ */
 @Component
 public class MailClient {
 
