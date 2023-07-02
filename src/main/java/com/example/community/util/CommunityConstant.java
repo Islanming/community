@@ -1,7 +1,7 @@
 package com.example.community.util;
 
 /**
- * 激活码
+ * 激活状态
  * @author Lenovo
  */
 public interface CommunityConstant {
@@ -20,5 +20,16 @@ public interface CommunityConstant {
      */
     int ACTIVATION_FAIL = 2;
 
+
+    /**
+     * 默认状态下的登录凭证的超时时间
+     */
+    int DEFAULT_EXPIRED_SECONDS = 3600 * 12;
+
+
+    /**
+     * 记住状态下的登录凭证的超时时间
+     */
+    int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 10;
 
 }

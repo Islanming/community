@@ -1,6 +1,8 @@
 package com.example.community.service;
 
+import com.example.community.entity.LoginTicket;
 import com.example.community.entity.User;
+import com.example.community.mapper.LoginTicketMapper;
 import com.example.community.mapper.UserMapper;
 import com.example.community.util.CommunityConstant;
 import com.example.community.util.CommunityUtil;
@@ -36,16 +38,19 @@ public class UserService implements CommunityConstant {
     @Autowired
     private TemplateEngine templateEngine;
 
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
+
     /**
      * 域名
      */
-    @Value("community.path.domain")
+    @Value("${community.path.domain}")
     private String domain;
 
     /**
      * 项目名
      */
-    @Value("server.servlet.context-path")
+    @Value("${server.servlet.context-path}")
     private String contextPath;
 
     public User findUserById(int id){
@@ -130,4 +135,94 @@ public class UserService implements CommunityConstant {
         return ACTIVATION_FAIL;
     }
 
+
+    /**
+     * 登录时的用户名，密码的验证及设置登录凭证的过期时间
+     * @param username
+     * @param password
+     * @param expiredSeconds
+     * @return
+     */
+    public Map<String,Object> login(String username,String password,int expiredSeconds){
+        Map<String,Object> map = new HashMap<>();
+
+        //空值判断
+        if(StringUtils.isBlank(username)){
+            map.put("usernameMsg","账号不能为空！");
+            return map;
+        }
+        if(StringUtils.isBlank(password)){
+            map.put("passwordMsg","密码不能为空！");
+            return map;
+        }
+
+        //验证账号
+        User user = userMapper.selectByName(username);
+        if(user == null){
+            map.put("usernameMsg","该账号不存在！");
+            return map;
+        }
+
+        //验证账号激活状态
+        if(user.getStatus()==0){
+            map.put("usernameMsg","该账号未激活！");
+            return map;
+        }
+
+        //验证密码
+        String key = CommunityUtil.md5(password+user.getSalt());
+        if(!user.getPassword().equals(key)){
+            map.put("passwordMsg","账号或密码错误！");
+            return map;
+        }
+
+        //生成登录凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket",loginTicket.getTicket());
+
+        return map;
+    }
+
+    /**
+     * 将登录凭证状态修改为1，即失效，退出登录状态
+     * @param ticket
+     */
+    public void logout(String ticket){
+        loginTicketMapper.updateStatus(ticket,1);
+    }
+
+    /**
+     * 查询登录信息
+     * @param ticket
+     * @return
+     */
+    public LoginTicket findLoginTicket(String ticket){
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    /**
+     * 更改用户头像URL
+     * @param userId
+     * @param headerUrl
+     * @return
+     */
+    public int updateHeader(int userId,String headerUrl){
+        return userMapper.updateHeader(userId,headerUrl);
+    }
+
+    /**
+     * 修改用户密码
+     * @param userId
+     * @param password
+     * @return
+     */
+    public int updatePassword(int userId,String password){
+        return userMapper.updatePassword(userId,password);
+    }
 }
