@@ -1,13 +1,16 @@
 package com.example.community.config;
 
 
-import com.example.community.annotation.LoginRequired;
+
 import com.example.community.controller.interceptor.LoginRequiredInterceptor;
 import com.example.community.controller.interceptor.LoginTicketInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+/**
+ * @author Lenovo
+ */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
