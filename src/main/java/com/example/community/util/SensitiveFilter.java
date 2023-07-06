@@ -42,7 +42,7 @@ public class SensitiveFilter {
             String keyword;
             while ((keyword = bufferedReader.readLine())!=null){
                 //添加到前缀树
-                System.out.println(keyword);
+//                System.out.println(keyword);
                 this.addKeyword(keyword);
             }
 

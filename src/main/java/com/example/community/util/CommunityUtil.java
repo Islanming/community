@@ -1,8 +1,11 @@
 package com.example.community.util;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -29,6 +32,31 @@ public class CommunityUtil {
             return null;
         }
         return DigestUtils.md5DigestAsHex(key.getBytes());
+    }
+
+    /**
+     * 将服务器给浏览器返回的一些数据进行封装整合为json格式的字符串，用于异步请求
+     * @param code 编码
+     * @param msg 提示信息
+     * @param map 业务信息
+     * @return json的字符串
+     */
+    public static String getJSONString(int code, String msg, Map<String,Object> map){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",code);
+        jsonObject.put("msg",msg);
+        if(map!=null){
+            for (String key:map.keySet()) {
+                jsonObject.put(key,map.get(key));
+            }
+        }
+        return jsonObject.toString();
+    }
+    public static String getJSONString(int code, String msg){
+        return getJSONString(code,msg,null);
+    }
+    public static String getJSONString(int code){
+        return getJSONString(code,null,null);
     }
 
 }

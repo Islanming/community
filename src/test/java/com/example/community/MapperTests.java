@@ -1,8 +1,10 @@
 package com.example.community;
 
+import com.example.community.entity.Comment;
 import com.example.community.entity.DiscussPost;
 import com.example.community.entity.LoginTicket;
 import com.example.community.entity.User;
+import com.example.community.mapper.CommentMapper;
 import com.example.community.mapper.DiscussPostMapper;
 import com.example.community.mapper.LoginTicketMapper;
 import com.example.community.mapper.UserMapper;
@@ -29,6 +31,9 @@ public class MapperTests {
 
     @Autowired
     private LoginTicketMapper loginTicketMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     @Test
     public void testSelectUser(){
@@ -92,5 +97,27 @@ public class MapperTests {
     public void testUpdateStatus(){
         String ticket = "abcd";
         loginTicketMapper.updateStatus(ticket,1);
+    }
+
+    @Test
+    public void testInsertDiscussPost(){
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setUserId(162);
+        discussPost.setTitle("测试");
+        discussPost.setContent("测试的内容");
+        discussPost.setType(1);
+        discussPost.setStatus(1);
+        discussPost.setCreateTime(new Date());
+        discussPost.setCommentCount(999);
+        discussPost.setScore(100);
+        discussPostMapper.insertDiscussPost(discussPost);
+        System.out.println(discussPost);
+    }
+
+    @Test
+    public void testSelectCommentsByEntity(){
+        List<Comment> comments = commentMapper.selectCommentsByEntity(1, 228, 0, 99);
+        System.out.println(comments);
+
     }
 }
