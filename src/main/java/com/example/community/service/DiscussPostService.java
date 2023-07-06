@@ -55,4 +55,13 @@ public class DiscussPostService {
         return discussPostMapper.selectDiscussPostById(id);
     }
 
+    /**
+     * 修改评论数量，用于增加评论后修改对应帖子的评论数
+     * @param id
+     * @param commentCount
+     * @return
+     */
+    public int updateCommentCount(int id,int commentCount){
+        return discussPostMapper.updateCommentCount(id, commentCount);
+    }
 }

@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 	<link rel="stylesheet" th:href="@{/css/global.css}" />
 	<link rel="stylesheet" th:href="@{/css/discuss-detail.css}" />
 	<title>牛客网-帖子详情</title>
@@ -113,7 +113,6 @@
 				</div>
 				<!-- 回帖列表 -->
 				<ul class="list-unstyled mt-4">
-
 					<li class="media pb-3 pt-3 mb-3 border-bottom" th:each="cvo:${comments}">
 						<a href="profile.html">
 							<img th:src="${cvo.user.headerUrl}" class="align-self-start mr-4 rounded-circle user-header" alt="用户头像" >
@@ -121,7 +120,7 @@
 						<div class="media-body">
 							<div class="mt-0">
 								<span class="font-size-12 text-success" th:utext="${cvo.user.username}">掉脑袋切切</span>
-								<span class="badge badge-secondary float-right floor" >
+								<span class="badge badge-secondary float-right floor">
 									<i th:text="${page.offset + cvoStat.count}">1</i>#
 								</span>
 							</div>
@@ -133,18 +132,19 @@
 								<ul class="d-inline float-right">
 									<li class="d-inline ml-2"><a href="#" class="text-primary">赞(1)</a></li>
 									<li class="d-inline ml-2">|</li>
-									<li class="d-inline ml-2"><a href="#" class="text-primary">回复<i th:text="${cvo.replyCount}">(2)</i></a></li>
+									<li class="d-inline ml-2"><a href="#" class="text-primary">回复(<i th:text="${cvo.replyCount}">2</i>)</a></li>
 								</ul>
 							</div>
 							<!-- 回复列表 -->
 							<ul class="list-unstyled mt-4 bg-gray p-3 font-size-12 text-muted">
+
 								<li class="pb-3 pt-3 mb-3 border-bottom" th:each="rvo:${cvo.replys}">
 									<div>
 										<span th:if="${rvo.target==null}">
 											<b class="text-info" th:text="${rvo.user.username}">寒江雪</b>:&nbsp;&nbsp;
 										</span>
 										<span th:if="${rvo.target!=null}">
-											<i class="text-info" th:text="${rvo.user.username}">1111</i> 回复
+											<i class="text-info" th:text="${rvo.user.username}">Sissi</i> 回复
 											<b class="text-info" th:text="${rvo.target.username}">寒江雪</b>:&nbsp;&nbsp;
 										</span>
 										<span th:utext="${rvo.reply.content}">这个是直播时间哈，觉得晚的话可以直接看之前的完整录播的~</span>
@@ -169,8 +169,9 @@
 												</div>
 											</form>
 										</div>
-									</div>
+									</div>								
 								</li>
+
 								<!-- 回复输入框 -->
 								<li class="pb-3 pt-3">
 									<form method="post" th:action="@{|/comment/add/${post.id}|}">
@@ -187,7 +188,6 @@
 							</ul>
 						</div>
 					</li>
-
 				</ul>
 				<!-- 分页 -->
 				<nav class="mt-5" th:replace="index::pagination">
