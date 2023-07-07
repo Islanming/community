@@ -11,7 +11,7 @@ function publish() {
 	var content = $("#message-text").val();
 
 	//发送异步请求（post）
-	$.post(
+	jQuery.post(
 		CONTEXT_PATH + "/discuss/add",
 		{"title":title, "content":content},
 		function(data){

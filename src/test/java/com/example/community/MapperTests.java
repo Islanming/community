@@ -1,13 +1,7 @@
 package com.example.community;
 
-import com.example.community.entity.Comment;
-import com.example.community.entity.DiscussPost;
-import com.example.community.entity.LoginTicket;
-import com.example.community.entity.User;
-import com.example.community.mapper.CommentMapper;
-import com.example.community.mapper.DiscussPostMapper;
-import com.example.community.mapper.LoginTicketMapper;
-import com.example.community.mapper.UserMapper;
+import com.example.community.entity.*;
+import com.example.community.mapper.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +28,8 @@ public class MapperTests {
 
     @Autowired
     private CommentMapper commentMapper;
+    @Autowired
+    private MessageMapper messageMapper;
 
     @Test
     public void testSelectUser(){
@@ -119,5 +115,23 @@ public class MapperTests {
         List<Comment> comments = commentMapper.selectCommentsByEntity(1, 228, 0, 99);
         System.out.println(comments);
 
+    }
+
+    @Test
+    public void testSelectLetters(){
+        List<Message> list = messageMapper.selectConversations(111, 0, 20);
+        for (Message message:list) {
+            System.out.println(message);
+        }
+        System.out.println(messageMapper.selectConversationCount(111));
+
+        List<Message> list1 = messageMapper.selectLetters("111_112", 0, 99);
+        for (Message message:list1) {
+            System.out.println(message);
+        }
+        System.out.println(messageMapper.selectLetterCount("111_112"));
+
+        System.out.println(messageMapper.selectLetterUnreadCount(111,null));
+        System.out.println(messageMapper.selectLetterUnreadCount(111,"111_112"));
     }
 }
