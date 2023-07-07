@@ -68,7 +68,13 @@ public class MessageController {
 
     }
 
-
+    /**
+     * 获取私信详情
+     * @param conversationId
+     * @param page
+     * @param model
+     * @return
+     */
     @RequestMapping(path = "/letter/detail/{conversationId}",method = RequestMethod.GET)
     public String getLetterDetail(@PathVariable("conversationId") String conversationId,Page page,Model model){
         //设置分页信息
@@ -94,6 +100,11 @@ public class MessageController {
         //设置私信对象
         model.addAttribute("target",getLetterTarget(conversationId));
 
+        //设置已读
+        List<Integer> unreadIds = getLetterIds(letterList);
+        if(!unreadIds.isEmpty()){
+            messagerService.readMessage(unreadIds);
+        }
 
         return "/site/letter-detail";
     }
@@ -116,7 +127,30 @@ public class MessageController {
 
     }
 
+    /**
+     * 获取未读消息的id
+     * @param letterList
+     * @return
+     */
+    private List<Integer> getLetterIds(List<Message> letterList){
+        List<Integer> ids = new ArrayList<>();
+        if(letterList!=null){
+            for (Message letter:letterList) {
+                if(hostHolder.getUser().getId() == letter.getToId() && letter.getStatus() == 0){
+                    ids.add(letter.getId());
+                }
+            }
+        }
+        return ids;
+    }
 
+
+    /**
+     * 发送私信
+     * @param toName
+     * @param content
+     * @return
+     */
     @RequestMapping(path = "/letter/send",method = RequestMethod.POST)
     @ResponseBody
     public String sendletter(String toName,String content){
