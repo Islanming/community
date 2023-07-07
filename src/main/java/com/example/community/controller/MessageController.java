@@ -146,7 +146,7 @@ public class MessageController {
 
 
     /**
-     * 发送私信
+     * 发送私信，是异步请求
      * @param toName
      * @param content
      * @return
@@ -154,6 +154,7 @@ public class MessageController {
     @RequestMapping(path = "/letter/send",method = RequestMethod.POST)
     @ResponseBody
     public String sendletter(String toName,String content){
+
         User target = userService.findUserByName(toName);
         if(target == null){
             return CommunityUtil.getJSONString(1,"目标用户不存在！");
@@ -162,12 +163,14 @@ public class MessageController {
         Message message = new Message();
         message.setFromId(hostHolder.getUser().getId());
         message.setToId(target.getId());
+        // 根据发送者id和接收id拼接会话id，小的拼在前面
         if(message.getFromId() < message.getToId()){
             message.setConversationId(message.getFromId()+"_"+message.getToId());
         }else {
             message.setConversationId(message.getToId()+"_"+message.getFromId());
         }
         message.setContent(content);
+        //默认为未读
         message.setStatus(0);
         message.setCreateTime(new Date());
 
