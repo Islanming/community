@@ -12,9 +12,14 @@ public class RedisKeyUtil {
     private static final String SPLIT = ":";
 
     /**
-     *  key的前缀
+     *  key的前缀,记录实体收到的赞
      */
     private static final String PREFIX_ENTITY_LIKE = "like:entity";
+
+    /**
+     * key前缀,用于记录某一用户收到的赞
+     */
+    private static final String PREFIX_USER_LIKE = "like:user";
 
     /**
      * 某个实体的赞
@@ -26,6 +31,16 @@ public class RedisKeyUtil {
      */
     public static String getEntityLikeKey(int entityType,int entityId){
         return PREFIX_ENTITY_LIKE + SPLIT + entityType + SPLIT + entityId;
+    }
+
+    /**
+     * 某个用户收到的赞
+     * like:user:userId -> int
+     * @param userId
+     * @return
+     */
+    public static String getUserLikeKey(int userId){
+        return PREFIX_USER_LIKE + SPLIT + userId;
     }
 
 }
