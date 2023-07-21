@@ -41,6 +41,10 @@ public class ServiceLogAspect {
         // 日志格式：用户[1.2.3.4]（IP），在[xxx]（时间）,访问了[com.example.community.service.xxx()].
         //获取用户IP
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        // attributes 是与请求有关的，之前的service都是通过controller层调用，有请求的数据，现在通过EventConsumer调用，请求会为空，故需要对空值进行处理，防止空指针异常
+        if(attributes == null){
+            return;
+        }
         HttpServletRequest request = attributes.getRequest();
         String ip = request.getRemoteHost();
         //获取时间
