@@ -11,7 +11,6 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
@@ -23,6 +22,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHitSupport;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.SearchPage;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -44,6 +52,9 @@ public class ElasticsearchTest {
     @Qualifier("client")
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+
+    @Autowired
+    private ElasticsearchRestTemplate restTemplate;
 
 
     /**
@@ -102,53 +113,39 @@ public class ElasticsearchTest {
      */
     @Test
     public void testSearchByRepository() throws IOException {
-        SearchRequest searchRequest = new SearchRequest("discusspost");
+        // 构建查询条件
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.multiMatchQuery("互联网寒冬","title","content"))
+                .withSorts(SortBuilders.fieldSort("type").order(SortOrder.DESC),
+                        SortBuilders.fieldSort("score").order(SortOrder.DESC),
+                        SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
+                .withPageable(PageRequest.of(0,10))
+                .withHighlightFields(
+                        new HighlightBuilder.Field("title").preTags("<em>").postTags("</em>"),
+                        new HighlightBuilder.Field("content").preTags("<em>").postTags("</em>")
+                ).build();
 
-        // 高亮设置
-        HighlightBuilder highlightBuilder = new HighlightBuilder();
-        highlightBuilder.field("title");
-        highlightBuilder.field("content");
-        highlightBuilder.requireFieldMatch(false);
-        highlightBuilder.preTags("<span style='color:red'>");
-        highlightBuilder.postTags("</span>");
+        // 查询结果
+        SearchHits<DiscussPost> search = restTemplate.search(searchQuery,DiscussPost.class);
+        // 将查询结果返回并进行分页
+        SearchPage<DiscussPost> page = SearchHitSupport.searchPageFor(search, Page.empty().getPageable());
 
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-                // matchQuery是模糊查询，会对key进行分词：searchSourceBuilder.query(QueryBuilders.matchQuery(key,value));
-                // termQuery是精准查询：searchSourceBuilder.query(QueryBuilders.termQuery(key,value));
-                .query(QueryBuilders.multiMatchQuery("互联网寒冬","title","content"))
-                // 设置排序条件
-                .sort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
-                .sort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
-                .sort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
-                // 设置查询数
-                .from(0).size(100)
-                // 设置高亮显示
-                .highlighter(highlightBuilder);
-
-        searchRequest.source(searchSourceBuilder);
-        SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-
-        List<DiscussPost> list = new LinkedList<>();
-        SearchHits searchHits = searchResponse.getHits();
-        for (SearchHit searchHit : searchHits) {
-            DiscussPost discussPost = JSONObject.parseObject(searchHit.getSourceAsString(), DiscussPost.class);
-
-            // 处理高亮显示的结果
-            HighlightField titleField = searchHit.getHighlightFields().get("title");
-            if (titleField != null) {
-                discussPost.setTitle(titleField.getFragments()[0].toString());
+        if(!page.isEmpty()){
+            for (org.springframework.data.elasticsearch.core.SearchHit<DiscussPost> discussPostSearch : page) {
+                DiscussPost discussPost = discussPostSearch.getContent();
+                // 处理高亮显示的结果
+                List<String> title = discussPostSearch.getHighlightFields().get("title");
+                if (title != null) {
+                    discussPost.setTitle(title.get(0));
+                }
+                List<String> content = discussPostSearch.getHighlightFields().get("content");
+                if (title != null) {
+                    discussPost.setTitle(content.get(0));
+                }
+                System.out.println(discussPost);
             }
-            HighlightField content = searchHit.getHighlightFields().get("content");
-            if (content != null) {
-                discussPost.setContent(content.getFragments()[0].toString());
-            }
-
-            list.add(discussPost);
-
-            System.out.println(discussPost);
         }
-
-
     }
+
 
 }
