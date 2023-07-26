@@ -12,16 +12,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -59,10 +57,13 @@ public class UserService implements CommunityConstant {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+
     public User findUserById(int id){
 //        return userMapper.selectById(id);
+        // 优先从缓存找
         User user = getCache(id);
         if(user == null){
+            // 找不到则进行初始化
             user = initCache(id);
         }
         return user;
@@ -286,5 +287,30 @@ public class UserService implements CommunityConstant {
     private void clearCache(int userId){
         String redisKey = RedisKeyUtil.getUserKey(userId);
         redisTemplate.delete(redisKey);
+    }
+
+    /**
+     * 获取用户权限
+     * @param userId
+     * @return
+     */
+    public Collection<? extends GrantedAuthority> getAuthority(int userId){
+        User user = this.findUserById(userId);
+
+        List<GrantedAuthority> list = new ArrayList<>();
+        list.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                switch (user.getType()){
+                    case 1:
+                        return AOTHORITY_ADMIN;
+                    case 2:
+                        return AOTHORITY_MODERATOR;
+                    default:
+                        return AOTHORITY_USER;
+                }
+            }
+        });
+        return list;
     }
 }

@@ -84,6 +84,14 @@ public class ElasticsearchTest {
     }
 
     /**
+     * 插入所有帖子信息
+     */
+    @Test
+    public void testInsertAll(){
+        discussRepository.saveAll(discussMapper.selectDiscussPosts(0,0,discussMapper.selectDiscussPostRows(0)));
+    }
+
+    /**
      * 修改数据,还是用的save方法，通过覆盖进行修改
      */
     @Test

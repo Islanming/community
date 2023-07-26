@@ -64,7 +64,6 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityId(discussPost.getId());
         eventProducer.fireEvent(event);
 
-
         //报错情况统一处理
         return CommunityUtil.getJSONString(0,"发布成功！");
     }
