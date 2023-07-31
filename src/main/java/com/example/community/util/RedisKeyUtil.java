@@ -47,6 +47,16 @@ public class RedisKeyUtil {
     private static final String PREFIX_USER = "user";
 
     /**
+     *  key前缀，独立访客
+     */
+    private static final String PREFIX_UV = "uv";
+
+    /**
+     *  key前缀，日活跃用户
+     */
+    private static final String PREFIX_DAU = "dau";
+
+    /**
      * 某个实体的赞
      * key：like:entity:entityType:entityId
      * 用set集合存，存userId，方便后序知道谁点赞，和统计点赞数
@@ -118,4 +128,37 @@ public class RedisKeyUtil {
     public static String getUserKey(int userId){
         return PREFIX_USER + SPLIT + userId;
     }
+
+    /**
+     * 单日uv
+     * @return
+     */
+    public static String getUVKey(String date){
+        return PREFIX_UV + SPLIT + date;
+    }
+
+    /**
+     * 区间uv
+     * @return
+     */
+    public static String getUVKey(String startDate,String endDate){
+        return PREFIX_UV + SPLIT + startDate + SPLIT + endDate;
+    }
+
+    /**
+     * 单日活跃用户
+     * @return
+     */
+    public static String getDAUKey(String date){
+        return PREFIX_DAU + SPLIT + date;
+    }
+
+    /**
+     * 区间活跃用户
+     * @return
+     */
+    public static String getDAUKey(String startDate,String endDate){
+        return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
+    }
+
 }
