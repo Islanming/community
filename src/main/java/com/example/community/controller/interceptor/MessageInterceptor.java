@@ -27,6 +27,7 @@ public class MessageInterceptor implements HandlerInterceptor {
         if(user!=null && modelAndView != null){
             int conversationUnreadCount = messagerService.findConversationUnreadCount(user.getId(), null);
             int noticeUnreadCount = messagerService.findNoticeUnreadCount(user.getId(), null);
+            // 未读的私信数和未读的系统通知
             modelAndView.addObject("allUnreadCount",conversationUnreadCount+noticeUnreadCount);
         }
     }
