@@ -57,6 +57,11 @@ public class RedisKeyUtil {
     private static final String PREFIX_DAU = "dau";
 
     /**
+     *  key前缀，用于计算帖子分数的功能
+     */
+    private static final String PREFIX_POST = "post";
+
+    /**
      * 某个实体的赞
      * key：like:entity:entityType:entityId
      * 用set集合存，存userId，方便后序知道谁点赞，和统计点赞数
@@ -159,6 +164,14 @@ public class RedisKeyUtil {
      */
     public static String getDAUKey(String startDate,String endDate){
         return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
+    }
+
+    /**
+     * 帖子分数
+     * @return
+     */
+    public static String getPostScoreKey(){
+        return PREFIX_POST + SPLIT + "score";
     }
 
 }

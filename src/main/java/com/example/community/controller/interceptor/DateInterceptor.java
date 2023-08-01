@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * 访问则进行记录，将IP计入UV或者将用户ID计入DAU，则需要在每一次访问处理前进行记录
  * @author Lenovo
  */
 @Component

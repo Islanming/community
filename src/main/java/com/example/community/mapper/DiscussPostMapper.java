@@ -16,7 +16,7 @@ public interface DiscussPostMapper{
      * @param limit 末行
      * @return
      */
-    List<DiscussPost> selectDiscussPosts(int userId,int offset,int limit);
+    List<DiscussPost> selectDiscussPosts(int userId,int offset,int limit,int orderMode);
 
     /**
      * 查询帖子的数目
@@ -67,5 +67,13 @@ public interface DiscussPostMapper{
      * @return
      */
     int updateStatus(int id,int status);
+
+    /**
+     * 修改帖子分数
+     * @param id
+     * @param score
+     * @return
+     */
+    int updateScore(int id,double score);
 
 }

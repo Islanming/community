@@ -9,9 +9,13 @@ import com.example.community.util.CommunityUtil;
 import com.example.community.util.MailClient;
 import com.example.community.util.RedisKeyUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService implements CommunityConstant {
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     private UserMapper userMapper;
 
@@ -313,4 +319,21 @@ public class UserService implements CommunityConstant {
         });
         return list;
     }
+
+//    /**
+//     * @Async 注解可以让该方法在多线程的环境下，被异步调用
+//     */
+//    @Async
+//    public void execute1(){
+//        logger.debug("execute1");
+//    }
+//
+//    /**
+//     * @Scheduled 注解可以让该方法在多线程的环境下，被定时地异步调用
+//     */
+//    @Scheduled(initialDelay = 10000,fixedDelay = 1000)
+//    public void execute2(){
+//        logger.debug("execute2");
+//    }
+
 }
