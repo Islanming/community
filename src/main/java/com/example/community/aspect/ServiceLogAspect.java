@@ -18,8 +18,8 @@ import java.util.Date;
  * 使用AOP实现业务层的统一记录日志
  * @author Lenovo
  */
-//@Component
-//@Aspect
+@Component
+@Aspect
 public class ServiceLogAspect {
     private static final Logger logger = LoggerFactory.getLogger(ServiceLogAspect.class);
 
